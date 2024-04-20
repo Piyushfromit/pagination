@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style type="text/css">
+        .pagination-wrap {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .pagination {
+            display: inline-flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .pagination li {
+            margin: 0 5px;
+        }
+
+        .pagination a {
+            display: block;
+            padding: 5px 10px;
+            background-color: #f2f2f2;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .pagination a:hover {
+            background-color: #ddd;
+        }
+
+        .pagination .active a {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .pagination .prev,
+        .pagination .next {
+            padding: 5px 10px;
+            background-color: transparent;
+            border: none;
+        }
+
+        .pagination .prev i,
+        .pagination .next i {
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .pagination .prev i:before,
+        .pagination .next i:before {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .pagination .prev i:before {
+            content: "\f053";
+            font-family: "FontAwesome";
+        }
+
+        .pagination .next i:before {
+            content: "\f054";
+            font-family: "FontAwesome";
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <!-- <c:set var="totalPages" value="${totalPages}" /> -->
+
+
+    <nav
+        style="display: flex !important; justify-content: center; align-item: center; margin-bottom: 2rem; margin-top: 2rem">
+
+        <button class="btn btn-primary prev">
+            <i class="fa fa-angle-left"></i>
+        </button>
+
+        <ul class="pagination">
+        </ul>
+        <button class="btn btn-primary next">
+            <i class="fa fa-angle-right"></i>
+        </button>
+
+    </nav>
+
+
+
+
+
+
+
+    <script>
+
+        let firstPage = 1;
+        let lastPage = 10;
+        let totalPages = 26;              // ${ totalPages };
+        let apicurrentpage = 8;            //${ apicurrentpage };
+
+        if (apicurrentpage % 10 >= 0) {
+            firstPage = (Math.floor(apicurrentpage / 10) * 10) + 1;
+            lastPage = ((Math.floor(apicurrentpage / 10) + 1) * 10);
+            if (firstPage === 0) {
+                firstPage = 1;
+            }
+            if (lastPage > totalPages) {
+                lastPage = totalPages;
+            }
+        }
+        let htmlData = "";
+        for (let i = firstPage; i <= lastPage; i++) {
+            htmlData += "<li><a href='/blog?page=" + i + "' class='" + i + "'>" + i + "</a></li>";
+
+        }
+        $(".pagination").append(htmlData);
+
+        function renderPagination() {
+            let htmlData = "";
+            for (let i = firstPage; i <= Math.min(lastPage, totalPages); i++) {
+                htmlData += "<li><a href='/blog?page=" + i + "' class='" + i + "'>" + i + "</a></li>";
+            }
+            $(".pagination").html(htmlData); // Replace existing pagination links
+        }
+
+        $(".next").on("click", function () {
+            firstPage += 10;
+            lastPage += 10;
+            if (lastPage > totalPages) {
+                lastPage = totalPages;
+            }
+            renderPagination();
+            updateButtonState();
+        });
+
+        $(".prev").on('click', function () {
+            firstPage -= 10;
+            if (lastPage % 10 > 0) {
+                lastPage -= lastPage % 10;
+            } else {
+                lastPage -= 10;
+            }
+            renderPagination();
+            updateButtonState();
+        });
+
+
+        // Initial update of button states
+        updateButtonState();
+
+        $(".pagination").find("a." + apicurrentpage).css({
+            "background-color": "green",
+            "color": "white"
+        });
+
+        function updateButtonState() {
+            $(".next").prop("disabled", lastPage >= totalPages);
+            $(".prev").prop("disabled", firstPage === 1);
+        }
+
+    </script>
+
+</body>
+
+</html>
